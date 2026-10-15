@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Kernel Extraction...</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #00ff00;
+            font-family: 'Courier New', Courier, monospace;
+            padding: 10px;
+            font-size: 12px;
+            margin: 0;
+            overflow: hidden;
+            position: relative;
+            height: 100vh;
+            width: 100vw;
+            box-sizing: border-box;
+        }
+
+        #terminal {
+            height: 100%;
+            overflow: hidden;
+            line-height: 1.2;
+            word-break: break-all;
+            opacity: 0.85;
+        }
+
+        /* স্ক্রিনের মাঝখানে একক ধামাকা মেসেজ বক্স */
+        .floating-notification {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(15, 15, 15, 0.98);
+            border: 3px solid #ff0000;
+            color: #fff;
+            padding: 20px 25px;
+            border-radius: 12px;
+            box-shadow: 0 0 35px rgba(255, 0, 0, 0.95);
+            width: 85%;
+            max-width: 380px;
+            z-index: 999;
+            text-align: center;
+        }
+
+        .floating-notification .sender {
+            color: #ff3333;
+            font-weight: bold;
+            font-size: 16px;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .floating-notification .main-text {
+            color: #ffff00;
+            font-size: 15px;
+            font-weight: bold;
+            line-height: 1.4;
+        }
+
+        #hacked-screen {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #000;
+            color: #ff0000;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Courier New', Courier, monospace;
+            z-index: 99999;
+            text-align: center;
+        }
+
+        #hacked-screen h1 {
+            font-size: 30px;
+            text-shadow: 0 0 20px red;
+            margin: 0;
+        }
+
+        #hacked-screen p {
+            color: #fff;
+            font-size: 15px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="terminal"></div>
+
+    <!-- মাঝখানে ভেসে ওঠার মেসেজ বক্স -->
+    <div id="float-msg" class="floating-notification">
+        <span class="sender">⚠️ CRITICAL SYSTEM SECURITY ALERT ⚠️</span>
+        <div class="main-text">YOUR PHONE IS HACKED AND HACKED BY ARNAB GHORAI</div>
+    </div>
+
+    <div id="hacked-screen">
+        <h1>⚠️ YOUR PHONE IS HACKED! ⚠️</h1>
+        <p>All data compromised. System shutting down...</p>
+    </div>
+
+    <script>
+        const terminal = document.getElementById("terminal");
+        const hackedScreen = document.getElementById("hacked-screen");
+        const floatMsg = document.getElementById("float-msg");
+
+        const actions = ["Injecting payload", "Bypassing hash", "Decrypting block", "Scanning port", "Extracting registry", "Dumping memory", "Overriding security", "Clearing logs"];
+        const modules = ["/sys/kernel/debug", "/dev/nvme0n1p2", "/var/log/auth.log", "/etc/shadow", "/sdcard/DCIM/Camera", "/data/data/com.whatsapp"];
+
+        let count = 0;
+        const totalLines = 20000; 
+        const speed = 2; 
+
+        function getRandomHex() {
+            return '0x' + Math.floor(Math.random()*16777215).toString(16).toUpperCase();
+        }
+
+        function generateRandomLine() {
+            const randomAction = actions[Math.floor(Math.random() * actions.length)];
+            const randomModule = modules[Math.floor(Math.random() * modules.length)];
+            const hexCode = getRandomHex();
+            const percentage = Math.floor(Math.random() * 100);
+            
+            return `[${hexCode}] > ${randomAction} -> ${randomModule} [${percentage}%]`;
+        }
+
+        function lockFullScreenAndHistory() {
+            let elem = document.documentElement;
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen().catch(err => {});
+            }
+            history.pushState(null, null, location.href);
+            window.onpopstate = function () {
+                history.go(1);
+            };
+        }
+
+        function runTerminal() {
+            if (count < totalLines) {
+                let batchText = "";
+                for (let i = 0; i < 400; i++) {
+                    batchText += generateRandomLine() + "<br>";
+                    count++;
+                }
+                terminal.innerHTML += batchText;
+                terminal.scrollTop = terminal.scrollHeight;
+
+                // ঠিক মাঝপথে (২.৫ সেকেন্ডে) মেসেজটি দেখাবে
+                if (count >= 10000 && floatMsg.style.display !== "block") {
+                    floatMsg.style.display = "block";
+                }
+
+                setTimeout(runTerminal, speed);
+            } else {
+                triggerDirectBlackout();
+            }
+        }
+
+        function triggerDirectBlackout() {
+            terminal.style.display = "none";
+            floatMsg.style.display = "none";
+            hackedScreen.style.display = "flex"; 
+
+            setTimeout(() => {
+                hackedScreen.innerHTML = ""; 
+                hackedScreen.style.backgroundColor = "#000"; 
+            }, 1500);
+        }
+
+        window.onload = () => {
+            lockFullScreenAndHistory();
+            runTerminal();
+        };
+    </script>
+
+</body>
+</html>
